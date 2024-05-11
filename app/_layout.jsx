@@ -14,7 +14,6 @@ import cn from "../src/assets/cn.png";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Forecast from "../src/pages/Forecast/Forecast";
-import { nowToHHMM } from "@/src/utils/date-time";
 
 const navTheme = {
   colors: {
@@ -27,11 +26,11 @@ const fontScale = PixelRatio.getFontScale();
 const getFontSize = (boyut) => boyut / fontScale;
 
 export default function RootLayout() {
-  const time = nowToHHMM();
   const [coordinates, setCoordinates] = useState();
   const [weather, setWeather] = useState();
   const [city, setCity] = useState();
   const sunset = weather?.daily.sunset[0].split("T")[1];
+  const time = weather?.current_weather.time.split("T")[1];
 
   const [isFontLoaded] = useFonts({
     "Alata-Regular": require("../assets/fonts/Alata-Regular.ttf"),
@@ -58,9 +57,9 @@ export default function RootLayout() {
     setCity(cityResponse);
   }
 
-  async function fetchCoordsByCity(city) {
+  async function fetchCoordsByCity(cityText) {
     try {
-      const coordsResponse = await WeatherAPI.fetchCoordsByCity(city);
+      const coordsResponse = await WeatherAPI.fetchCoordsByCity(cityText);
       setCoordinates(coordsResponse);
     } catch (err) {
       Alert.alert("Aouch !", err);
